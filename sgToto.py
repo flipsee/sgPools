@@ -263,13 +263,17 @@ class TotoResult:
             logger.error(ex, exc_info=True)
             raise
 
-    def ProcessTotoResult(self):
+    def ProcessTotoResult(self, **kwargs):
+        DrawNumber = kwargs.get('DrawNumber', None)
         MaxCombinationLength = 7
         count = 0
         try:
             data = sgPoolsModel.sgPoolsBL()
             with data.atomic() as txn:
-                temp = list(data.get_totoresults())
+                if DrawNumber is None:
+                    temp = list(data.get_totoresults())
+                else:
+                    temp = [data.get_totoresult(DrawNumber)]
             data.close()
             
             for num in temp:
